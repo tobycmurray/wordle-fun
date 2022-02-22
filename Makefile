@@ -1,6 +1,6 @@
 .PHONY: default
 
-OUTPUTS=wordle-freq.csv wordle-words-nyt-bad.txt wordle-words-orig-bad.txt wordle-guesses-nyt-bad.txt wordle-guesses-orig-bad.txt wordle-freq-histogram.csv 1w.txt en-5.txt report-orig.txt report-nyt.txt
+OUTPUTS=wordle-freq-nyt.csv wordle-words-nyt-bad.txt wordle-words-orig-bad.txt wordle-guesses-nyt-bad.txt wordle-guesses-orig-bad.txt wordle-freq-histogram-nyt.csv 1w.txt en-5.txt report-orig.txt report-nyt.txt
 
 ENGLISH_FREQ=1w.txt
 BADWORDS=en.txt
@@ -17,7 +17,7 @@ report-%.txt: wordle-words-%.txt wordle-words-%-bad.txt
 %-5.txt: %.txt
 	cat $< | grep "^[a-zA-Z][a-zA-Z][a-zA-Z][a-zA-Z][a-zA-Z]$$" > $@
 
-wordle-freq.csv: wordle-words-nyt.txt ${ENGLISH_FREQ}
+wordle-freq-%.csv: wordle-words-%.txt ${ENGLISH_FREQ}
 	echo > $@;\
 	for w in $$(cat $<); do\
 	    num=$$(grep -n "^$$w$$" ${ENGLISH_FREQ} | cut -d':' -f1);\
@@ -33,7 +33,7 @@ wordle-freq.csv: wordle-words-nyt.txt ${ENGLISH_FREQ}
 	done
 
 
-wordle-freq-histogram.csv: wordle-freq.csv gen_histograms.py
+wordle-freq-histogram-%.csv: wordle-freq-%.csv gen_histograms.py
 	cat $< | python gen_histograms.py > $@
 
 clean:
