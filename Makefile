@@ -1,12 +1,27 @@
 .PHONY: default
 
-OUTPUTS=wordle-freq-nyt.csv wordle-words-nyt-bad.txt wordle-words-orig-bad.txt wordle-guesses-nyt-bad.txt wordle-guesses-orig-bad.txt wordle-freq-histogram-nyt.csv 1w.txt en-5.txt report-orig.txt report-nyt.txt
+OUTPUTS=wordle-freq-nyt.csv wordle-words-nyt-bad.txt wordle-words-orig-bad.txt wordle-guesses-nyt-bad.txt wordle-guesses-orig-bad.txt wordle-freq-histogram-nyt.csv 1w.txt en-5.txt report-orig.txt report-nyt.txt wordle-freq-sorted-nyt.txt  words-removed-by-nyt.txt guesses-removed-by-nyt.txt
 
 ENGLISH_FREQ=1w.txt
 BADWORDS=en.txt
 BADWORDS5=en-5.txt
 
 default: ${OUTPUTS}
+
+words-removed-by-nyt.txt: wordle-words-orig.txt wordle-words-nyt.txt
+	diff $^ | grep '^<' | cut -d' ' -f2 > $@
+
+guesses-removed-by-nyt.txt: wordle-guesses-orig.txt wordle-guesses-nyt.txt
+	diff $^ | grep '^<' | cut -d' ' -f2 > $@
+
+# for completeness but these are empty at present
+words-added-by-nyt.txt: wordle-words-orig.txt wordle-words-nyt.txt
+	diff $^ | grep '^>' | cut -d' ' -f2 > $@
+guesses-added-by-nyt.txt: wordle-guesses-orig.txt wordle-guesses-nyt.txt
+	diff $^ | grep '^>' | cut -d' ' -f2 > $@
+
+wordle-freq-sorted-%.txt: wordle-freq-%.csv gen_sorted_by_freq.py
+	cat $< | python gen_sorted_by_freq.py > $@
 
 1w.txt: count_1w.txt
 	cat $< | cut -f1 > $@
