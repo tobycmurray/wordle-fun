@@ -1,6 +1,6 @@
 .PHONY: default
 
-OUTPUTS=wordle-freq-nyt.csv wordle-words-nyt-bad.txt wordle-words-orig-bad.txt wordle-guesses-nyt-bad.txt wordle-guesses-orig-bad.txt wordle-freq-histogram-nyt.csv 1w.txt en-5.txt report-orig.txt report-nyt.txt wordle-freq-sorted-nyt.txt  words-removed-by-nyt.txt guesses-removed-by-nyt.txt
+OUTPUTS=1w-5-freq.csv wordle-freq-nyt.csv wordle-words-nyt-bad.txt wordle-words-orig-bad.txt wordle-guesses-nyt-bad.txt wordle-guesses-orig-bad.txt wordle-freq-histogram-nyt.csv 1w-5-freq-histogram.csv 1w.txt en-5.txt report-orig.txt report-nyt.txt wordle-freq-sorted-nyt.txt  words-removed-by-nyt.txt guesses-removed-by-nyt.txt
 
 ENGLISH_FREQ=1w.txt
 BADWORDS=en.txt
@@ -32,6 +32,15 @@ report-%.txt: wordle-words-%.txt wordle-words-%-bad.txt
 %-5.txt: %.txt
 	cat $< | grep "^[a-zA-Z][a-zA-Z][a-zA-Z][a-zA-Z][a-zA-Z]$$" > $@
 
+# FIXME: remove duplication with the following recipe
+1w-5-freq.csv: 1w-5.txt ${ENGLISH_FREQ}
+	echo > $@;\
+	for w in $$(cat $<); do\
+	    num=$$(grep -n "^$$w$$" ${ENGLISH_FREQ} | cut -d':' -f1);\
+	    if [ ! -z "$$num" ]; then echo "$$w, $$num" >> $@;\
+	    else echo "$$w, 0" >> $@; fi;\
+	done
+
 wordle-freq-%.csv: wordle-words-%.txt ${ENGLISH_FREQ}
 	echo > $@;\
 	for w in $$(cat $<); do\
@@ -49,6 +58,10 @@ wordle-freq-%.csv: wordle-words-%.txt ${ENGLISH_FREQ}
 
 
 wordle-freq-histogram-%.csv: wordle-freq-%.csv gen_histograms.py
+	cat $< | python gen_histograms.py > $@
+
+# FIXME: remove duplication with above recipe
+1w-5-freq-histogram.csv: 1w-5-freq.csv gen_histograms.py
 	cat $< | python gen_histograms.py > $@
 
 clean:

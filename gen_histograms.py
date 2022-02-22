@@ -35,7 +35,7 @@ for line in sys.stdin.readlines():
 
 for bucket in range(maxbucket+1):
     if bucket == 0:
-        print("\"0\", %d" % buckets[bucket])
+        print("\"0\", %d" % read_bucket(0))
     else:
         print("\"%d--%d\", %d" % ((bucket-1)*binsize+1,bucket*binsize,read_bucket(bucket)))
     
