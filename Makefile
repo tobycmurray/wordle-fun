@@ -43,6 +43,9 @@ ${OUT}%-5.txt: ${OUT}%.txt
 	cat $< | grep "^[a-zA-Z][a-zA-Z][a-zA-Z][a-zA-Z][a-zA-Z]$$" > $@
 
 # FIXME: remove duplication with the following recipe
+# FIXME: incredibly inefficient and takes ages (approx 1 hour on my machine)
+#        would be better to first put the ${ENGLISH_FREQ} data into a hashtable
+#        to avoid the linear time lookup currently performed by grep -n
 ${OUT}1w-5-freq.csv: ${OUT}1w-5.txt ${ENGLISH_FREQ}
 	echo > $@;\
 	for w in $$(cat $<); do\
