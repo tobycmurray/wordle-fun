@@ -1,6 +1,6 @@
 # wordle-fun
 
-Some fun with Wordle.
+Some fun with Wordle. By Toby Murray.
 
 ## How to Build
 
